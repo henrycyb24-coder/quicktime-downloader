@@ -5,20 +5,30 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// VERY IMPORTANT FOR RENDER
+const PORT = process.env.PORT || 3000;
+
+/*
+====================================
+ROOT
+====================================
+*/
 app.get('/', (req, res) => {
   res.json({ message: "QuickTime Downloader API Running 🚀" });
 });
 
-
-/* =====================================
-   1️⃣ GET VIDEO INFO (Thumbnail + Title + Description)
-===================================== */
-
-app.post('/info', (req, res) => {
-  const { url } = req.body;
+/*
+====================================
+1️⃣ GET VIDEO INFO (GET METHOD)
+====================================
+*/
+app.get('/info', (req, res) => {
+  const url = req.query.url;
 
   if (!url) {
     return res.status(400).json({ error: "Video URL required" });
@@ -49,13 +59,13 @@ app.post('/info', (req, res) => {
   });
 });
 
-
-/* =====================================
-   2️⃣ DOWNLOAD VIDEO
-===================================== */
-
-app.post('/download', (req, res) => {
-  const { url } = req.body;
+/*
+====================================
+2️⃣ DOWNLOAD VIDEO (GET METHOD)
+====================================
+*/
+app.get('/download', (req, res) => {
+  const url = req.query.url;
 
   if (!url) {
     return res.status(400).json({ error: "Video URL required" });
@@ -77,14 +87,16 @@ app.post('/download', (req, res) => {
         console.log(err);
       }
 
-      // delete file after sending
       fs.unlink(outputPath, () => {});
     });
   });
 });
 
-
-const PORT = 3000;
+/*
+====================================
+START SERVER
+====================================
+*/
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
