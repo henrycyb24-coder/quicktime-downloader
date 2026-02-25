@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: quicktime-downloader
+    env: node
+    buildCommand: |
+      npm install
+      apt-get update
+      apt-get install -y ffmpeg
+      pip install yt-dlp
+    startCommand: node server.js
